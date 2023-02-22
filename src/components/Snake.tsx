@@ -1,8 +1,14 @@
+import { Fragment } from "react";
 import { StyleSheet, View } from "react-native";
+import { Coordinate } from "../types/types";
 
-export default function Snake({ snake }: any): JSX.Element {
+interface SnakeProps {
+  snake: Coordinate[];
+}
+
+export default function Snake({ snake }: SnakeProps): JSX.Element {
   return (
-    <>
+    <Fragment>
       {snake.map((segment: any, index: number) => {
         const segmentStyle = {
           left: segment.x * 10, // adjust for the size of each segment
@@ -10,7 +16,7 @@ export default function Snake({ snake }: any): JSX.Element {
         };
         return <View key={index} style={[styles.snake, segmentStyle]} />;
       })}
-    </>
+    </Fragment>
   );
 }
 const styles = StyleSheet.create({

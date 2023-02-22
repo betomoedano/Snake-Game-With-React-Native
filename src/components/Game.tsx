@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { Direction, Coordinate, GestureEventType } from "../types/types";
+import { checkEatsFood } from "../utils/checkEatsFood";
+import { checkGameOver } from "../utils/checkGameOver";
+import { randomFoodPosition } from "../utils/randomFoodPosition";
 import Food from "./Food";
 import Score from "./Score";
 import Snake from "./Snake";
-
+const GAME_BOUNDS = { xMin: 1, xMax: 35, yMin: 1, yMax: 67 };
+const MOVE_INTERVAL = 50;
+const SCORE_INCREMENT = 10;
 export default function Game(): JSX.Element {
   const [direction, setDirection] = useState<Direction>(Direction.Right);
   const [snake, setSnake] = useState<Coordinate[]>([{ x: 5, y: 5 }]);
@@ -17,7 +22,7 @@ export default function Game(): JSX.Element {
     if (!isGameOver) {
       const intervalId = setInterval(() => {
         moveSnake();
-      }, 100);
+      }, MOVE_INTERVAL);
       return () => clearInterval(intervalId);
     }
   }, [snake, isGameOver]);
@@ -25,17 +30,13 @@ export default function Game(): JSX.Element {
   const moveSnake = () => {
     const snakeHead = snake[0];
 
-    //check game over
-    if (
-      snakeHead.x < 1 ||
-      snakeHead.x > 35 ||
-      snakeHead.y < 1 ||
-      snakeHead.y > 67
-    ) {
-      setIsGameOver(true);
+    // GAME OVER
+    if (checkGameOver(snakeHead, GAME_BOUNDS)) {
+      setIsGameOver((prev) => !prev);
+      return;
     }
 
-    let newHead = { ...snakeHead }; // create a new head object to avoid mutating the original head
+    const newHead = { ...snakeHead }; // create a new head object to avoid mutating the original head
     switch (direction) {
       case Direction.Up:
         newHead.y -= 1;
@@ -52,16 +53,10 @@ export default function Game(): JSX.Element {
       default:
         break;
     }
-    //check eats food
-    const distanceBetweenFoodAndSnakeX: number = Math.abs(newHead.x - food.x);
-    const distanceBetweenFoodAndSnakeY: number = Math.abs(newHead.y - food.y);
-    if (distanceBetweenFoodAndSnakeX < 2 && distanceBetweenFoodAndSnakeY < 2) {
-      setFood({
-        x: Math.floor(Math.random() * 34),
-        y: Math.floor(Math.random() * 67),
-      });
+    if (checkEatsFood(newHead, food, 2)) {
+      setFood(randomFoodPosition(GAME_BOUNDS.xMax, GAME_BOUNDS.yMax));
       setSnake([newHead, ...snake]);
-      setScore(score + 10);
+      setScore(score + SCORE_INCREMENT);
     } else {
       setSnake([newHead, ...snake.slice(0, -1)]);
     }
