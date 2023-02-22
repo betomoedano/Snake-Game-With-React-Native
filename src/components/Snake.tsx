@@ -1,7 +1,6 @@
 import { StyleSheet, View } from "react-native";
 
 export default function Snake({ snake }: any): JSX.Element {
-  console.log(snake);
   return (
     <>
       {snake.map((segment: any, index: number) => {
@@ -18,8 +17,8 @@ const styles = StyleSheet.create({
   snake: {
     width: 20,
     height: 20,
-    borderRadius: 6,
-    backgroundColor: "gray",
+    borderRadius: 5,
+    backgroundColor: "lightgreen",
     position: "absolute",
   },
 });

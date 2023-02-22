@@ -1,25 +1,10 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { PanGestureHandler } from "react-native-gesture-handler";
+import { Direction, Coordinate, GestureEventType } from "../types/types";
 import Food from "./Food";
 import Score from "./Score";
 import Snake from "./Snake";
-
-interface GestureEventType {
-  nativeEvent: { translationX: number; translationY: number };
-}
-
-export interface Coordinate {
-  x: number;
-  y: number;
-}
-
-enum Direction {
-  Right,
-  Up,
-  Left,
-  Down,
-}
 
 export default function Game(): JSX.Element {
   const [direction, setDirection] = useState<Direction>(Direction.Right);
@@ -68,34 +53,33 @@ export default function Game(): JSX.Element {
         break;
     }
     //check eats food
-    if (newHead.x === food.x && newHead.y === food.y) {
-      setSnake([newHead, ...snake]);
+    const distanceBetweenFoodAndSnakeX: number = Math.abs(newHead.x - food.x);
+    const distanceBetweenFoodAndSnakeY: number = Math.abs(newHead.y - food.y);
+    if (distanceBetweenFoodAndSnakeX < 2 && distanceBetweenFoodAndSnakeY < 2) {
       setFood({
         x: Math.floor(Math.random() * 34),
         y: Math.floor(Math.random() * 67),
       });
+      setSnake([newHead, ...snake]);
       setScore(score + 10);
     } else {
       setSnake([newHead, ...snake.slice(0, -1)]);
     }
   };
+
   const handleGesture = (event: GestureEventType) => {
     const { translationX, translationY } = event.nativeEvent;
     if (Math.abs(translationX) > Math.abs(translationY)) {
       if (translationX > 0) {
         setDirection(Direction.Right);
-        console.log("right");
       } else {
         setDirection(Direction.Left);
-        console.log("left");
       }
     } else {
       if (translationY > 0) {
         setDirection(Direction.Down);
-        console.log("down");
       } else {
         setDirection(Direction.Up);
-        console.log("up");
       }
     }
   };
@@ -121,6 +105,6 @@ const styles = StyleSheet.create({
   boundaries: {
     flex: 1,
     borderColor: "gray",
-    borderWidth: 5,
+    borderWidth: 7,
   },
 });
