@@ -13,7 +13,7 @@ import Snake from "./Snake";
 
 const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }];
 const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
-const GAME_BOUNDS = { xMin: 1, xMax: 35, yMin: 1, yMax: 67 };
+const GAME_BOUNDS = { xMin: 0, xMax: 35, yMin: 0, yMax: 63 };
 const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
@@ -122,13 +122,14 @@ export default function Game(): JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.primary,
   },
   boundaries: {
     flex: 1,
     borderColor: Colors.primary,
-    borderWidth: 7,
-    borderBottomEndRadius: 20,
-    borderBottomStartRadius: 20,
+    borderWidth: 12,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    backgroundColor: Colors.background,
   },
 });
