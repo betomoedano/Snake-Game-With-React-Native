@@ -1,30 +1,22 @@
 import { Fragment } from "react";
 import { View, Text, StyleSheet } from "react-native";
-
+import { Colors } from "../styles/colors";
 interface ScoreProps {
-  isGameOver: boolean;
   score: number;
 }
 
-export default function Score({ isGameOver, score }: ScoreProps): JSX.Element {
+export default function Score({ score }: ScoreProps): JSX.Element {
   return (
     <View>
-      {isGameOver ? (
-        <Fragment>
-          <Text style={styles.text}>Game Over 🏴‍☠️</Text>
-          <Text style={styles.text}>Score: {score}</Text>
-        </Fragment>
-      ) : (
-        <Text style={styles.text}>Score: {score}</Text>
-      )}
+      <Text style={styles.text}>🍎 {score}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 32,
+    fontSize: 22,
     fontWeight: "bold",
-    color: "gray",
+    color: Colors.primary,
   },
 });
