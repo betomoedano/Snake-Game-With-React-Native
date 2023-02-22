@@ -23,15 +23,16 @@ export default function Game(): JSX.Element {
   const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
   const [score, setScore] = useState<number>(0);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isGameOver) {
       const intervalId = setInterval(() => {
-        moveSnake();
+        !isPaused && moveSnake();
       }, MOVE_INTERVAL);
       return () => clearInterval(intervalId);
     }
-  }, [snake, isGameOver]);
+  }, [snake, isGameOver, isPaused]);
 
   const moveSnake = () => {
     const snakeHead = snake[0];
@@ -92,12 +93,21 @@ export default function Game(): JSX.Element {
     setIsGameOver(false);
     setScore(0);
     setDirection(Direction.Right);
+    setIsPaused(false);
+  };
+
+  const pauseGame = () => {
+    setIsPaused(!isPaused);
   };
 
   return (
     <PanGestureHandler onGestureEvent={handleGesture}>
       <SafeAreaView style={styles.container}>
-        <Header reloadGame={reloadGame}>
+        <Header
+          reloadGame={reloadGame}
+          pauseGame={pauseGame}
+          isPaused={isPaused}
+        >
           <Score score={score} />
         </Header>
         <View style={styles.boundaries}>
