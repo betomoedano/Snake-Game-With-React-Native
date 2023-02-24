@@ -1,9 +1,8 @@
-import { PropsWithChildren } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import Score from "./Score";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../styles/colors";
 import { FontAwesome } from "@expo/vector-icons";
+
 interface HeaderProps {
   reloadGame: () => void;
   pauseGame: () => void;

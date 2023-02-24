@@ -1,16 +1,12 @@
-import { Fragment } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Text, StyleSheet } from "react-native";
 import { Colors } from "../styles/colors";
+
 interface ScoreProps {
   score: number;
 }
 
 export default function Score({ score }: ScoreProps): JSX.Element {
-  return (
-    <View>
-      <Text style={styles.text}>🍎 {score}</Text>
-    </View>
-  );
+  return <Text style={styles.text}>🍎 {score}</Text>;
 }
 
 const styles = StyleSheet.create({
