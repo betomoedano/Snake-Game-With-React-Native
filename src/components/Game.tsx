@@ -100,6 +100,8 @@ export default function Game(): JSX.Element {
     setIsPaused(!isPaused);
   };
 
+  // console.log(JSON.stringify(snake, null, 0));
+
   return (
     <PanGestureHandler onGestureEvent={handleGesture}>
       <SafeAreaView style={styles.container}>
