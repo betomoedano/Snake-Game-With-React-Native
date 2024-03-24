@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
-import { PanGestureHandler } from "react-native-gesture-handler";
+import { FC, PropsWithChildren, useEffect, useState } from "react";
 import { Colors } from "../styles/colors";
-import { Direction, Coordinate, GestureEventType } from "../types/types";
+import { Direction, Coordinate } from "../types/types";
 import { checkEatsFood } from "../utils/checkEatsFood";
 import { checkGameOver } from "../utils/checkGameOver";
+import { checkEatSelf } from "../utils/checkEatSelf";
 import { randomFoodPosition } from "../utils/randomFoodPosition";
-import Food from "./Food";
 import Header from "./Header";
+import Footer from "./Footer";
 import Score from "./Score";
-import Snake from "./Snake";
+import Controls from "./Controls";
+import GameField from "./GameField";
+import { SafeAreaView, StyleSheet } from "react-native";
 
 const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }];
 const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
@@ -17,7 +18,7 @@ const GAME_BOUNDS = { xMin: 0, xMax: 35, yMin: 0, yMax: 63 };
 const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
-export default function Game(): JSX.Element {
+const Game: FC<PropsWithChildren> = () => {
   const [direction, setDirection] = useState<Direction>(Direction.Right);
   const [snake, setSnake] = useState<Coordinate[]>(SNAKE_INITIAL_POSITION);
   const [food, setFood] = useState<Coordinate>(FOOD_INITIAL_POSITION);
@@ -37,13 +38,7 @@ export default function Game(): JSX.Element {
   const moveSnake = () => {
     const snakeHead = snake[0];
     const newHead = { ...snakeHead }; // create a new head object to avoid mutating the original head
-
-    // GAME OVER
-    if (checkGameOver(snakeHead, GAME_BOUNDS)) {
-      setIsGameOver((prev) => !prev);
-      return;
-    }
-
+    
     switch (direction) {
       case Direction.Up:
         newHead.y -= 1;
@@ -61,29 +56,18 @@ export default function Game(): JSX.Element {
         break;
     }
 
+    // GAME OVER
+    if (checkGameOver(snakeHead, GAME_BOUNDS) || (snake.length > 1 && checkEatSelf(newHead, snake))) {
+      setIsGameOver((prev) => !prev);
+      return;
+    }
+    
     if (checkEatsFood(newHead, food, 2)) {
       setFood(randomFoodPosition(GAME_BOUNDS.xMax, GAME_BOUNDS.yMax));
       setSnake([newHead, ...snake]);
       setScore(score + SCORE_INCREMENT);
     } else {
       setSnake([newHead, ...snake.slice(0, -1)]);
-    }
-  };
-
-  const handleGesture = (event: GestureEventType) => {
-    const { translationX, translationY } = event.nativeEvent;
-    if (Math.abs(translationX) > Math.abs(translationY)) {
-      if (translationX > 0) {
-        setDirection(Direction.Right);
-      } else {
-        setDirection(Direction.Left);
-      }
-    } else {
-      if (translationY > 0) {
-        setDirection(Direction.Down);
-      } else {
-        setDirection(Direction.Up);
-      }
     }
   };
 
@@ -100,38 +84,40 @@ export default function Game(): JSX.Element {
     setIsPaused(!isPaused);
   };
 
-  // console.log(JSON.stringify(snake, null, 0));
-
   return (
-    <PanGestureHandler onGestureEvent={handleGesture}>
       <SafeAreaView style={styles.container}>
         <Header
           reloadGame={reloadGame}
           pauseGame={pauseGame}
-          isPaused={isPaused}
-        >
+          isPaused={isPaused}>
           <Score score={score} />
         </Header>
-        <View style={styles.boundaries}>
-          <Snake snake={snake} />
-          <Food x={food.x} y={food.y} />
-        </View>
+        <GameField SnakeProps={snake} FoodProps={food} style={styles.boundaries}/>
+        <Footer>
+          <Controls 
+            onDownPress={ () => setDirection(Direction.Down) } 
+            onUpPress={ () => setDirection(Direction.Up) }
+            onLeftPress={ () => setDirection(Direction.Left) }
+            onRightPress={ () => setDirection(Direction.Right) }>
+          </Controls>
+        </Footer>
       </SafeAreaView>
-    </PanGestureHandler>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 3,
+    flexDirection: "column",
     backgroundColor: Colors.primary,
   },
   boundaries: {
-    flex: 1,
+    flex: 10,
     borderColor: Colors.primary,
     borderWidth: 12,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.background
   },
 });
+
+
+export default Game;
