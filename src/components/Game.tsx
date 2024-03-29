@@ -12,7 +12,7 @@ import Controls from "./Controls";
 import GameField from "./GameField";
 import { SafeAreaView, StyleSheet } from "react-native";
 
-const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }];
+const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 4, y: 5 }];
 const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
 const GAME_BOUNDS = { xMin: 0, xMax: 35, yMin: 0, yMax: 63 };
 const MOVE_INTERVAL = 50;

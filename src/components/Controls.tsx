@@ -1,5 +1,6 @@
-import React, { FC, PropsWithChildren } from "react";
+import React, { FC, PropsWithChildren, useEffect } from "react";
 import { Button, GestureResponderEvent, View } from "react-native";
+import { Platform } from "react-native";
 
 const styles = {
   row: { flexDirection: "row" },
@@ -7,10 +8,10 @@ const styles = {
 } as const;
 
 interface ControlsProps {
-    onUpPress:    (e: GestureResponderEvent) => void
-    onDownPress:  (e: GestureResponderEvent) => void;
-    onLeftPress:  (e: GestureResponderEvent) => void;
-    onRightPress: (e: GestureResponderEvent) => void;
+    onUpPress:    (e: GestureResponderEvent | undefined) => void
+    onDownPress:  (e: GestureResponderEvent | undefined) => void;
+    onLeftPress:  (e: GestureResponderEvent | undefined) => void;
+    onRightPress: (e: GestureResponderEvent | undefined) => void;
 }
 
 const Row: FC<PropsWithChildren> = (props) => {
@@ -21,7 +22,33 @@ const Column: FC<PropsWithChildren> = (props) => {
 }
 
 const Controls: FC<ControlsProps> = (props) => {
-    return (
+    
+  useEffect(() => {
+    if(Platform.OS === 'web') {
+      window.addEventListener("keydown", (e) => { 
+        switch (e.key) {
+          case "ArrowUp":
+          case "w":
+            props.onUpPress(undefined);
+            break;
+          case "ArrowDown":
+          case "s":
+            props.onDownPress(undefined);
+            break;
+          case "ArrowLeft":
+          case "a":
+            props.onLeftPress(undefined);
+            break;
+          case "ArrowRight":
+          case "d":
+            props.onRightPress(undefined);
+            break;
+        }
+      })
+    }
+  });
+  
+  return (
       <View>
         <Row>
           <Column />
@@ -42,3 +69,7 @@ const Controls: FC<ControlsProps> = (props) => {
     );
 }
 export default Controls;
+
+function async(): React.EffectCallback {
+  throw new Error("Function not implemented.");
+}
