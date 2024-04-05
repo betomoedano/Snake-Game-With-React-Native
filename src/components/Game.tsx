@@ -12,9 +12,9 @@ import Controls from "./Controls";
 import GameField from "./GameField";
 import { SafeAreaView, StyleSheet } from "react-native";
 
+let GAME_BOUNDS: { xMin: number, xMax: number , yMin: number, yMax: number };
 const SNAKE_INITIAL_POSITION = [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 4, y: 5 }];
 const FOOD_INITIAL_POSITION = { x: 5, y: 20 };
-const GAME_BOUNDS = { xMin: 0, xMax: 35, yMin: 0, yMax: 63 };
 const MOVE_INTERVAL = 50;
 const SCORE_INCREMENT = 10;
 
@@ -25,17 +25,19 @@ const Game: FC<PropsWithChildren> = () => {
   const [score, setScore] = useState<number>(0);
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
-
+  
   useEffect(() => {
-    if (!isGameOver) {
-      const intervalId = setInterval(() => {
-        !isPaused && moveSnake();
-      }, MOVE_INTERVAL);
-      return () => clearInterval(intervalId);
-    }
+      if (!isGameOver) {
+        const intervalId = setInterval(() => {
+            !isPaused && moveSnake();
+          }, 
+          MOVE_INTERVAL);
+        return () => clearInterval(intervalId);
+      }
   }, [snake, isGameOver, isPaused]);
 
   const moveSnake = () => {
+  
     const snakeHead = snake[0];
     const newHead = { ...snakeHead }; // create a new head object to avoid mutating the original head
     
@@ -92,7 +94,11 @@ const Game: FC<PropsWithChildren> = () => {
           isPaused={isPaused}>
           <Score score={score} />
         </Header>
-        <GameField SnakeProps={snake} FoodProps={food} style={styles.boundaries}/>
+        <GameField onLayout={e => {
+            const l = e.nativeEvent.layout; 
+            GAME_BOUNDS = {xMin: 0, xMax: l.width / 10 - 3, yMin: 0, yMax: l.height / 10 - 3};
+          }} 
+          SnakeProps={snake} FoodProps={food} style={styles.boundaries}/>
         <Footer>
           <Controls 
             onDownPress={ () => setDirection(Direction.Down) } 
@@ -107,12 +113,12 @@ const Game: FC<PropsWithChildren> = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
+    flex: 1,
     flexDirection: "column",
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.primary
   },
   boundaries: {
-    flex: 10,
+    flex: 9,
     borderColor: Colors.primary,
     borderWidth: 12,
     backgroundColor: Colors.background
