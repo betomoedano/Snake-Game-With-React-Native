@@ -3,7 +3,7 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - main
+      - test
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
@@ -31,6 +31,7 @@ jobs:
           app_location: "/src" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "/dist" # Built app content directory - optional
+          app_build_command: "npx expo export -p web"
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
